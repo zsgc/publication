@@ -1,0 +1,132 @@
+﻿<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Patent Query</title>
+	<style>
+	#headbar {
+		background: #092234;
+		padding: 0px;
+		margin: 0px;
+	}
+	</style>
+	<script src="SPARQLWrapper.js"></script>
+	<script>
+	
+	var $ = function(id){
+			return document.getElementById(id);
+		},
+		sparql = new SPARQLWrapper("http://dbpedia.org/sparql"),
+		data = {},
+		
+		};
+	
+	function getInfo(){
+		
+		var nowUrl = location.href,
+			name = nowUrl.substring(nowUrl.indexOf("s=") + 2, nowUrl.length);
+			//name = patent[id].name;
+		
+		console.log(name);
+		
+		data = {
+			"http://xmlns.com/foaf/0.1/depiction": "unknow.jpg",
+			"http://dbpedia.org/ontology/abstract": "unknow",
+			"http://xmlns.com/foaf/0.1/depiction": "unknow",
+			"http://dbpedia.org/property/language": "unknow",
+			"http://dbpedia.org/property/country": "unknow",
+			"http://dbpedia.org/property/wikiPageExternalLink": "unknow",
+			"http://dbpedia.org/property/author": "unknow"
+		};
+		name = name.replace(/\s|\+/g, "_").replace(/\./g, "");
+		var command = "prefix foaf: <http://xmlns.com/foaf/0.1/> "
+						+ "select distinct ?type ?value "
+						+ "where { "
+						+ "?s foaf:name ?sname . "
+						+ "?sname bif:contains '" + name + "'. "
+						+ "?s ?type ?value . "
+						+ "} ";
+			sparql.setQuery(command);
+			sparql.query(function(json){
+				showInfo((eval("(" + json + ")")).results.bindings);
+			});
+	}
+	
+	function showInfo(results){
+		var text = "",
+			lang,
+			result,
+			tmp;	
+		
+		function getContent(url){
+			var pos = url.lastIndexOf("/");
+			return url.substring(pos + 1, url.length);
+		}
+		
+		if(results.length !== 0){
+			for(var i = 0; i < results.length; i++){
+				result = results[i];
+				lang = result.value["xml:lang"];
+				tmp = result.type.value;
+				if((lang && lang === "en") || (!lang)){
+					if(tmp === "http://dbpedia.org/property/writer"){
+						data[tmp] = (data[tmp][0] === "unknow") ? [] : data[tmp];
+						data[tmp].push(result.value.value);
+					}else{
+						data[tmp] = result.value.value;
+					}
+				}else{
+					continue;
+				}
+			}
+			text += "<img src = '" + data["http://xmlns.com/foaf/0.1/depiction"] + "' onload='changeSize(this)'/><br />";
+			text += "<h2>语言</h2>";
+			tmp = getContent(data["http://dbpedia.org/property/language"]);
+			text += "<p><a href='http://en.wikipedia.org/wiki/" + tmp + "'>" + tmp.replace(/\_/, " ") + "</a></p>";
+			text += "<h2>国家</h2>";
+			tmp = getContent(data["http://dbpedia.org/property/country"]);
+			text += "<p><a href='http://en.wikipedia.org/wiki/" + tmp + "'>" + tmp.replace(/\_/, " ") + "</a></p>";
+			text += "<h2>作者</h2>";
+			text += data["http://dbpedia.org/property/author"]+  "<br />";
+	
+			
+			$("result").innerHTML = text;
+			
+			text = "<h2>简介</h2>";
+			text += data["http://dbpedia.org/ontology/abstract"] + "<br />";
+			text += "<h2>相关链接</h2>";
+			text += data["http://dbpedia.org/ontology/wikiPageExternalLink"] + "<br />";
+			
+			$("biography").innerHTML = text;
+			
+			
+			console.log(data);
+		}else{
+			console.log("some error happen");
+		}
+		
+	}
+	
+	function changeSize(elem){
+		if(+elem.width > 350){
+			elem.width = "350";
+		}
+	}
+	getInfo();
+	
+	</script>
+</head>
+<body style="padding:0px; margin:0px;">
+<div id="headbar">
+	<form method="get" id="searchform" action="" style="margin-bottom:0px;">
+		<input type="search" id="name" value="" name="s" class="s" size="50" tabindex="1" autofocus="true" placeholder="Search..." style="margin:20px 0 20px 10px;">
+	</form>
+</div>
+<div id="result" style="float:left;width:400px;background:#F8F8EE;padding:10px;margin:0px;"></div>
+<div id="content">
+	<div id="biography" style="margin:10px;">
+	</div>
+
+</div>
+
+</body>
+</html>
