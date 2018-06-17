@@ -16,9 +16,8 @@
 			return document.getElementById(id);
 		},
 		sparql = new SPARQLWrapper("http://dbpedia.org/sparql"),
-		data = {},
+		data = {};
 		
-		};
 	
 	function getInfo(){
 		
@@ -96,7 +95,7 @@
 			text += "<h2>相关链接</h2>";
 			text += data["http://dbpedia.org/ontology/wikiPageExternalLink"] + "<br />";
 			
-			$("biography").innerHTML = text;
+			$("abstract").innerHTML = text;
 			
 			
 			console.log(data);
@@ -123,7 +122,7 @@
 </div>
 <div id="result" style="float:left;width:400px;background:#F8F8EE;padding:10px;margin:0px;"></div>
 <div id="content">
-	<div id="biography" style="margin:10px;">
+	<div id="abstract" style="margin:10px;">
 	</div>
 
 </div>
