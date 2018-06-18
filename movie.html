@@ -1,13 +1,50 @@
 ﻿<html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Patent Query</title>
+	<title>publication search</title>
 	<style>
 	#headbar {
-		background: #092234;
-		padding: 0px;
-		margin: 0px;
+	width: 80%;
+	margin-top: 300px;
+	margin-left: auto;
+	margin-right: auto;
+		
 	}
+	#name {
+		float: left;
+		width: 80%;
+		height: 40px;
+		padding: 0 1%;
+		border: none;
+		color: #6a6f77;
+		}
+	#searchform{
+		font-size:1.4em;
+		height:40px;
+		border-radius:4px;
+		border:1px solid #c8cccf;
+		color:#6a6f77;
+	}
+	#result{
+    width: 98%;
+    padding: 1%;
+    border: #2e6da4;
+    margin-top: 5px;
+    font-size: 12px;
+	}
+	.searchbtn {
+		width: 20%;
+		height: 40px;
+		background-color: #337ab7;
+		border-color: #2e6da4;
+		font-size: 1.5em;
+		color: #fff;
+		cursor: pointer;
+		border-collapse: separate;
+		}
+	
+
+	
 	</style>
 	<script src="SPARQLWrapper.js"></script>
 	<script>
@@ -67,12 +104,9 @@
 				lang = result.value["xml:lang"];
 				tmp = result.type.value;
 				if((lang && lang === "en") || (!lang)){
-					if(tmp === "http://dbpedia.org/property/writer"){
-						data[tmp] = (data[tmp][0] === "unknow") ? [] : data[tmp];
-						data[tmp].push(result.value.value);
-					}else{
+					
 						data[tmp] = result.value.value;
-					}
+					
 				}else{
 					continue;
 				}
@@ -86,14 +120,15 @@
 			text += "<p><a href='http://en.wikipedia.org/wiki/" + tmp + "'>" + tmp.replace(/\_/, " ") + "</a></p>";
 			text += "<h2>作者</h2>";
 			text += data["http://dbpedia.org/property/author"]+  "<br />";
-	
+			text += "<h2>相关链接</h2>";
+			text += data["http://dbpedia.org/ontology/wikiPageExternalLink"] + "<br />";
 			
 			$("result").innerHTML = text;
 			
 			text = "<h2>简介</h2>";
 			text += data["http://dbpedia.org/ontology/abstract"] + "<br />";
-			text += "<h2>相关链接</h2>";
-			text += data["http://dbpedia.org/ontology/wikiPageExternalLink"] + "<br />";
+			
+			
 			
 			$("abstract").innerHTML = text;
 			
@@ -115,16 +150,27 @@
 	</script>
 </head>
 <body style="padding:0px; margin:0px;">
-<div id="headbar">
-	<form method="get" id="searchform" action="" style="margin-bottom:0px;">
-		<input type="search" id="name" value="" name="s" class="s" size="50" tabindex="1" autofocus="true" placeholder="Search..." style="margin:20px 0 20px 10px;">
+<div class="logo">
+		<div align ="center">
+			<img src=
+			"https://wiki.dbpedia.org/sites/default/files/DBpediaLogoFull.png" style="width:300px;height:200px;">
+			
+		</div>
+    </div>
+<div id="headbar" style="margin-top:100px">
+	<form method="get" id="searchform" action="" >
+		<input type="search" id="name" value="" name="s" class="s" size="50" tabindex="1" autofocus="true" placeholder="Search..." >
+		<button class="searchbtn" searchbtn=>Search</button>
 	</form>
-</div>
-<div id="result" style="float:left;width:400px;background:#F8F8EE;padding:10px;margin:0px;"></div>
-<div id="content">
-	<div id="abstract" style="margin:10px;">
-	</div>
+	
 
+<div id="result" style="float:left;width:400px;padding:10px;margin:20px;"></div>
+
+<div id="content">
+	<div id="abstract" style="margin:20px;">
+	</div>
+	<div class="clearfix"></div>
+</div>
 </div>
 
 </body>
