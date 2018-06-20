@@ -1,0 +1,887 @@
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>publication search</title>
+	<style>
+	#headbar {
+	width: 80%;
+	margin-top: 300px;
+	margin-left: auto;
+	margin-right: auto;
+		
+	}
+	#name {
+		float: left;
+		width: 80%;
+		height: 40px;
+		padding: 0 1%;
+		border: none;
+		color: #6a6f77;
+		}
+	#searchform{
+		font-size:1.4em;
+		height:40px;
+		border-radius:4px;
+		border:1px solid #c8cccf;
+		color:#6a6f77;
+	}
+	#result_ting{
+    width: 98%;
+    padding: 1%;
+    border: #2e6da4;
+    margin-top: 5px;
+    font-size: 12px;
+	}
+	/*
+	.searchbtn {
+		width: 20%;
+		height: 40px;
+		background-color: #337ab7;
+		border-color: #2e6da4;
+		font-size: 1.5em;
+		color: #fff;
+		cursor: pointer;
+		border-collapse: separate;
+		}
+	*/
+	.btn btn-primary dropdown-toggle {
+		width: 20%;
+		height: 40px;
+		background-color: #337ab7;
+		border-color: #2e6da4;
+		font-size: 1.5em;
+		color: #fff;
+		cursor: pointer;
+		border-collapse: separate;
+		}
+	
+	#main{
+		margin-top: 150px;
+	}
+	
+	img {
+	    width: 100%;
+	    height: 50%;
+			
+	}
+	.opt{height:30px;line-height:24px;float: left;}
+	.opt:not(:first-child){
+		margin-left: 15px
+	}
+
+   	.mydiv{
+		float: left;
+   		text-align: center;
+   		margin-top: 40px;
+   	}
+   	#none{
+   		text-align: center;
+   		margin-top: 40px;
+   		font-size: 20px;
+   	}
+
+	
+	</style>
+	<script src="js/SPARQLWrapper.js"></script>
+	<script src="js/echarts.min.js" type="text/javascript"></script>
+	<script src="js/jquery.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="css/magic-check.css">
+	<link rel="stylesheet" type="text/css" href="css/loading.css">
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	
+</head>
+<body style="padding:0px; margin:0px;">
+<div class="logo">
+		<div align ="center">
+			<img src=
+			"https://wiki.dbpedia.org/sites/default/files/DBpediaLogoFull.png" style="width:300px;height:200px;">
+			
+		</div>
+    </div>
+<div id="headbar" style="margin-top:100px">
+	<form method="get" id="searchform" action="" >
+		<input type="search" id="name" value="" name="s" class="s" size="50" tabindex="1" autofocus="true" placeholder="Search..." >
+		<!--
+		<button class="searchbtn" searchbtn=>Search</button>
+		
+		-->
+		<button type="button" class="btn btn-primary dropdown-toggle" onclick="search(),getInfo(), getInfo_tuijian()" style="width:20%;height:40px;" >Search</button>
+	</form>
+	
+	<div class="row" >
+		  <div class="col-md-4 col-md-offset-4">
+		    <div style="margin-top: 10px">
+		    	<div class="opt">
+					<input class="magic-checkbox" type="radio" name="layout" value="Film" id="c1" checked="">
+					<label for="c1">电影</label>
+				</div>
+				<div class="opt">
+					<input class="magic-checkbox" type="radio" name="layout" value="Book" id="c2">
+					<label for="c2">书籍</label>
+				</div>
+				<div class="opt">
+					<input class="magic-checkbox" type="radio" name="layout" value="Game" id="c3">
+					<label for="c3">游戏</label>
+				</div> 
+				<div class="opt">
+					<input class="magic-checkbox" type="radio" name="layout" value="ALL" id="c4">
+					<label for="c4">不限</label>
+				</div> 
+		    </div>
+		  </div><!-- /.col-lg-6 -->
+		</div><!-- /.row -->
+
+<div id="result_ting" style="float:left;width:400px;padding:10px;margin:20px;"></div>
+
+<div id="content">
+	<div id="abstract" style="margin:20px;">
+	</div>
+	<div class="clearfix"></div>
+</div>
+</div>
+
+
+<div>
+			
+		<div class="row">
+			<div id="loading" class="col-md-4 col-md-offset-4 hidden">
+				<div class="spinner">
+				  <div class="rect1"></div>
+				  <div class="rect2"></div>
+				  <div class="rect3"></div>
+				  <div class="rect4"></div>
+				  <div class="rect5"></div>
+				</div>
+			</div>
+			
+			<hr style="border:3 double #987cb9" width="80%" color="#987cb9" SIZE=3 ></hr>
+			
+					
+
+			<div id="result" class="row hidden" >
+				<div class="col-md-4 col-md-offset-1  mydiv" align="left">
+				
+					<div >
+						<li id="list" align="left"> </li>
+					</div>
+					
+					
+				</div>
+				<div id="bing" class="col-md-5 col-md-offset-1  mydiv">
+					<div id="container" style="height:340px">
+						
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		
+		
+	</div>
+
+<div style='width:49%;float:left;height:700px;'>
+<div id="result_tuijian" style = "margin-left:80px" ><p></p></div>
+</div>
+<div style='width:1px;border:#2e6da4;float:left;height:700px;'><!--这个div模拟一条红色的垂直分割线--></div>
+<div id="none" class="col-md-4 col-md-offset-4 hidden"><p><font size ="6" face="Verdana" color="#6495ED">可能喜欢</font></p></div>
+<div style='width:50%;float:left;height:700px;'>
+<div id="container_tuijian" style="height:340px;margin:80px">
+</div>
+<script>
+	
+	// 搜索部分
+	var search_ting = function(id){
+			return document.getElementById(id);
+		};
+		//sparql = new SPARQLWrapper("http://dbpedia.org/sparql"),
+		//data = {};
+		
+	
+	function getInfo(){
+		
+		//var nowUrl = location.href,
+		//	name = nowUrl.substring(nowUrl.indexOf("s=") + 2, nowUrl.length);
+			//name = patent[id].name;
+		sparql = new SPARQLWrapper("https://dbpedia.org/sparql"),
+		data = {};
+		var searchValue = $("#name").val();
+		console.log(name);
+		
+		data = {
+			"https://xmlns.com/foaf/0.1/depiction": "unknow.jpg",
+			"https://dbpedia.org/ontology/abstract": "unknow",
+			"https://xmlns.com/foaf/0.1/depiction": "unknow",
+			"https://dbpedia.org/property/language": "unknow",
+			"https://dbpedia.org/property/country": "unknow",
+			"https://dbpedia.org/property/wikiPageExternalLink": "unknow",
+			"https://dbpedia.org/property/author": "unknow"
+		};
+		name = searchValue.replace(/\s|\+/g, "_").replace(/\./g, "");
+		var command = "prefix foaf: <https://xmlns.com/foaf/0.1/> "
+						+ "select distinct ?type ?value "
+						+ "where { "
+						+ "?s foaf:name ?sname . "
+						+ "?sname bif:contains '" + name + "'. "
+						+ "?s ?type ?value . "
+						+ "} ";
+			sparql.setQuery(command);
+			sparql.query(function(json){
+				showInfo((eval("(" + json + ")")).results.bindings);
+			});
+	}
+	
+	function showInfo(results){
+		var text = "",
+			lang,
+			result,
+			tmp;	
+		
+		function getContent(url){
+			var pos = url.lastIndexOf("/");
+			return url.substring(pos + 1, url.length);
+		}
+		
+		if(results.length !== 0){
+			for(var i = 0; i < results.length; i++){
+				result = results[i];
+				lang = result.value["xml:lang"];
+				tmp = result.type.value;
+				if((lang && lang === "en") || (!lang)){
+					
+						data[tmp] = result.value.value;
+					
+				}else{
+					continue;
+				}
+			}
+			text += "<img src = '" + data["https://xmlns.com/foaf/0.1/depiction"] + "' onload='changeSize(this)'/><br />";
+			text += "<h2>语言</h2>";
+			tmp = getContent(data["https://dbpedia.org/property/language"]);
+			text += "<p><a href='https://en.wikipedia.org/wiki/" + tmp + "'>" + tmp.replace(/\_/, " ") + "</a></p>";
+			text += "<h2>国家</h2>";
+			tmp = getContent(data["https://dbpedia.org/property/country"]);
+			text += "<p><a href='https://en.wikipedia.org/wiki/" + tmp + "'>" + tmp.replace(/\_/, " ") + "</a></p>";
+			text += "<h2>作者</h2>";
+			text += data["https://dbpedia.org/property/author"]+  "<br />";
+			text += "<h2>相关链接</h2>";
+			text += data["https://dbpedia.org/ontology/wikiPageExternalLink"] + "<br />";
+			
+			search_ting("result_ting").innerHTML = text;
+			
+			text = "<h2>简介</h2>";
+			text += data["https://dbpedia.org/ontology/abstract"] + "<br />";
+			
+			
+			
+			search_ting("abstract").innerHTML = text;
+			
+			
+			console.log(data);
+		}else{
+			console.log("some error happen");
+		}
+		
+	}
+	
+	function changeSize(elem){
+		if(+elem.width > 350){
+			elem.width = "350";
+		}
+	}
+	//getInfo();
+	
+	
+	//推荐部分
+	var search_tuijian = function(id){
+			return document.getElementById(id);
+		};
+		
+	function getInfo_tuijian(){
+		sparql = new SPARQLWrapper("https://dbpedia.org/sparql"),
+		data = {};
+		var searchValue = $("#name").val();
+		//var nowUrl = location.href,
+		//	name = nowUrl.substring(nowUrl.indexOf("s=") + 2, nowUrl.length);
+		name = searchValue.replace(/\s/g, "_");
+		
+		
+		var command = //"prefix foaf: <https://xmlns.com/foaf/0.1/> "
+						"PREFIX rdf: <https://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+						+ "PREFIX owl: <https://www.w3.org/2002/07/owl#> "
+						+ "PREFIX xsd: <https://www.w3.org/2001/XMLSchema#> "
+						+ "PREFIX rdfs: <https://www.w3.org/2000/01/rdf-schema#> "
+						+ "SELECT COUNT(?movie) SAMPLE(?movie) "
+						+ "where "
+						+ "{ "
+						+ "dbr:" + name + " dct:subject ?o . "
+						+ "?movie dct:subject ?o . "
+						+ "FILTER (?movie != dbr:" + name + ") . "
+						+ "} GROUP BY ?movie ORDER BY DESC(COUNT(?movie)) limit 7";
+						//+ "ORDER BY DESC(COUNT(?movie))";
+			console.log(command);
+			//var command = 'select distinct ?Concept where {[] a ?Concept} LIMIT 100';
+			sparql.setQuery(command);
+			sparql.query(function(json){
+			
+					//showInfo_tuijian((eval("(" + json + ")")).results.bindings);
+					tuijian = JSON.parse(json).results.bindings;
+					/*barData = [
+						tuijian[0]["callret-0"].value,
+						tuijian[1]["callret-0"].value,
+						tuijian[2]["callret-0"].value,
+						tuijian[3]["callret-0"].value,
+						tuijian[4]["callret-0"].value,
+						tuijian[5]["callret-0"].value,
+						tuijian[6]["callret-0"].value,
+		  			
+					];*/
+					
+					//console.log("tuijian", tuijian);
+					showInfo_tuijian(tuijian);
+				
+			});
+	}
+	
+	function showInfo_tuijian(tuijian){
+		var text = "";
+		//text += "<h2>相关推荐</h2>"; 替换
+		text += "<h2>可能喜欢:</h2>" + "<br/>"
+		if(tuijian.length !== 0){
+			for(var i = 0; i < tuijian.length; i++){
+				//text += results[i];
+				
+				text += "推荐" + (i+1) + ":<br/>" 
+				//text += "URI : " + tuijian[i]["callret-1"].value + "<br />";
+				text += "出版物 : " + tuijian[i]["callret-1"].value.split("/")[tuijian[i]["callret-1"].value.split("/").length-1].replace(/\_/g," ") + "<br />";
+				text += "--------------------------------------------------------------------------------------------------------------------------" + "<br /><br />";
+				//console.log("count",tuijian[i]["callret-1"].value.split("/")[tuijian[i]["callret-1"].value.split("/").length-1]);
+				search_tuijian("result_tuijian").innerHTML = text;
+			}
+		}else{
+			search_tuijian("result_tuijian").innerHTML = "没有任何相关信息！";
+		}
+		show_tuijian();
+	}
+	
+	//show_tuijian();
+	
+	function show_tuijian(){
+		var dom = document.getElementById("container_tuijian");
+		var myChart = echarts.init(dom);
+		var app = {};
+		option = null;
+		
+		let yAxisMonth = ["推荐一",
+			"推荐二",
+			"推荐三",
+			"推荐四",
+			"推荐五",
+			"推荐六",
+			"推荐七",
+			
+			
+		];
+		let barData = [
+			tuijian[0]["callret-0"].value,
+			tuijian[1]["callret-0"].value,
+			tuijian[2]["callret-0"].value,
+			tuijian[3]["callret-0"].value,
+			tuijian[4]["callret-0"].value,
+			tuijian[5]["callret-0"].value,
+			tuijian[6]["callret-0"].value,
+		   
+			
+		];
+		
+		let label = [
+			tuijian[0]["callret-1"].value,
+			tuijian[1]["callret-1"].value,
+			tuijian[2]["callret-1"].value,
+			tuijian[3]["callret-1"].value,
+			tuijian[4]["callret-1"].value,
+			tuijian[5]["callret-1"].value,
+			tuijian[6]["callret-1"].value,
+		   
+			
+		];
+		
+		let barDataTwo = [];
+		let coordData2 = [];
+		let coordData = [];
+		// let chartHeight;
+		for (let i = 0; i < barData.length; i++) {
+			barDataTwo.push(Math.max.apply(Math, barData) + 5000);
+			coordData.push({
+				"coord": [Number(barData[i]) - 1, i]
+			});
+			coordData2.push({
+				"coord": [Math.max.apply(Math, barData) + 5000, i]
+			})
+		}
+		// chartHeight = barData.length * 53;
+		// $("#ParticipateUnits_Bar").css({
+		//     height: chartHeight
+		// });
+		// let dom = G3("ParticipateUnits_Bar");
+		// dom.myChart.resize();
+		option = {
+			backgroundColor: "#020e25",
+			title: {
+				text: ''
+			},
+			legend: null,
+			tooltip: {
+				trigger: 'axis',
+				axisPointer: {
+					type: 'none'
+				},
+				formatter: function(params) {
+					return params[0].name + "<br/>" + '共享次数: ' + params[0].value;
+				}
+			},
+			grid: {
+				containLabel: true,
+				left: "25%",
+				right: "15%",
+				top: "10%",
+				bottom:"10%",
+			},
+			yAxis: [{
+					data: yAxisMonth,
+					inverse: true,
+					axisLine: {
+						show: false
+					},
+					axisTick: {
+						show: false
+					},
+					axisLabel: {
+						margin: 10,
+						textStyle: {
+							fontSize: 12,
+							color: '#42a5c2',
+						},
+						formatter: function(value) {
+							return '{Sunny|' + value + '}';
+						},
+						rich: {
+							value: {
+								lineHeight: 30,
+							},
+							Sunny: {
+								// width: 70,
+								height: 35,
+								padding: [0, 10, 0, 10],
+								align: 'center',
+								backgroundColor: {
+									image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAAAjCAYAAADsZeb8AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjIxNzQ2ODFCQkVFNjExRTc4OEU3QzFEMjE5RjExOEZBIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjIxNzQ2ODFDQkVFNjExRTc4OEU3QzFEMjE5RjExOEZBIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjE3NDY4MTlCRUU2MTFFNzg4RTdDMUQyMTlGMTE4RkEiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjE3NDY4MUFCRUU2MTFFNzg4RTdDMUQyMTlGMTE4RkEiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7fNMa8AAABg0lEQVR42uzaMUvDQBgG4O+7pJS0ghVBOkknK06dAh38E126uji4iogtzlFBcNTi4urin3CoOHWytpM41aJYxTa2Te4sWgpWA2lufV8I4ULuOB747m44VkrRdIydXoa8bpGZC8Qxm5Sk74fG76D2+Bv/+UdF6BNuDA47N1K/+wTMI7itiAPnPoVobL87JMwSfzxWRadeE+2bJn8+9wj5Pywq5gRv10uR7FdJDpJm/aws3hovEAqXCSLJYZV7rddYzTkBy2wRP2ug65DfT44AL0ASAdHYowwZ8ZLZOD8FR9Ry9twiu0+jTeQea2DkcmZREJ27Gih0EI24LVrXTVBobizstnEO1EVEgAhEICJABCIQgYgAEYhABCICRCACEYhIWERlLSVAoYPo929len0FFDqISl7J1FoOFDqIpnWp5pbzMrW6CI6IiP4hPYxK+sDLbm6BQ2Nj8Y+tMhnx7jBX3gCJzhFHxPIqkV4Y2Ef7cj6L0p4huJ+oLSgqjJuy+jdlvwQYAN1TdkgsoTftAAAAAElFTkSuQmCC'
+								}
+
+
+							}
+						}
+					}
+				},
+				{
+					data: label,
+					inverse: true,
+					axisLine: {
+						show: false
+					},
+					axisTick: {
+						show: false
+					},
+					axisLabel: {
+						show: false
+					},
+				},
+			],
+			xAxis: [{
+				type: "value",
+				splitLine: {
+					show: false
+				},
+				axisLabel: {
+					show: false
+				},
+				axisTick: {
+					show: false
+				},
+				axisLine: {
+					show: false
+				}
+			}, {
+				type: "value",
+				splitLine: {
+					show: false
+				},
+				axisLabel: {
+					show: false
+				},
+				axisTick: {
+					show: false
+				},
+				axisLine: {
+					show: false
+				}
+			}],
+			series: [{
+					z: 10,
+					xAxisIndex: 0,
+					yAxisIndex: 0,
+					name: '民警',
+					type: 'pictorialBar',
+					data: barData,
+					barCategoryGap: '80%',
+					label: {
+						normal: {
+							show: true,
+							position: 'inside',
+							textStyle: {
+								fontSize: 12,
+								color: '#00ffff'
+							}
+						}
+					},
+					symbolRepeat: false,
+					symbolSize: ['100%', 33],
+					symbolOffset: [-16.5, 0],
+					itemStyle: {
+						normal: {
+							color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+									offset: 0,
+									color: '#083e6d',
+								},
+								{
+									offset: 0.5,
+									color: '#0272f2',
+									opacity: 0.7
+								}, {
+									offset: 1,
+									color: '#083e6d',
+									opacity: 0.5
+								}
+							], false),
+						}
+					},
+					symbolClip: true,
+					symbolPosition: 'end',
+					symbol: 'rect',
+					// symbol: 'path://M0 0 L0 60 L225 60 L300 0 Z',
+					markPoint: {
+						data: coordData,
+						symbolSize: [33, 33],
+						symbolOffset: [-0.5, 0],
+						z: 3,
+						label: {
+							normal: {
+								show: false
+							}
+						},
+						symbolClip: true,
+						symbol: 'path://M 300 100 L 100 100 L 100 300 z',
+
+					}
+				},
+				{
+					z: 6,
+					xAxisIndex: 1,
+					yAxisIndex: 1,
+					animation: false,
+					name: '民警',
+					type: 'pictorialBar',
+					data: barDataTwo,
+					barCategoryGap: '80%',
+					label: {
+						normal: {
+							show: false,
+							position: 'inside',
+							textStyle: {
+								fontSize: 12,
+								color: '#00ffff'
+							}
+						}
+					},
+					symbolRepeat: false,
+					symbolSize: ['100%', 33],
+					symbolOffset: [-16.5, 0],
+					itemStyle: {
+						normal: {
+							color: '#00abc5',
+							opacity: 0.085
+						}
+					},
+					symbolClip: true,
+					symbol: 'rect',
+					markPoint: {
+						data: coordData2,
+						symbolSize: [33, 33],
+						symbolOffset: [-0.5, 0],
+						label: {
+							normal: {
+								show: false
+							}
+						},
+						itemStyle: {
+							normal: {
+								color: '#00abc5',
+								opacity: 0.085
+							}
+						},
+						symbolClip: true,
+						symbol: 'path://M 300 100 L 100 100 L 100 300 z',
+						// animationDelay:100
+						// animationDuration:1200
+						// animation:false
+						// animationDurationUpdate :1000
+					}
+				},
+			]
+		};
+
+		
+
+		if (option && typeof option === "object") {
+			myChart.setOption(option, true);
+		}
+	}
+	//getInfo_tuijian();
+	
+	
+	// 搜索图书、电影、书
+	var totalPage = 0;
+	var currentPage = 1;
+	var mainArr = [];
+	var sparql = new SPARQLWrapper("https://dbpedia.org/sparql");
+	var game = []
+	var book = []
+	var film = []
+
+
+	function search(){
+		currentPage = 1;
+		game = []
+		book = []
+		film = []
+		$("#none").addClass("hidden");
+		$("#result").addClass("hidden");
+
+		var searchValue = $("#name").val();
+		console.log(searchValue)
+		if(searchValue == ""||searchValue==null){
+			alert("请输入搜索内容")
+			return;
+		}
+		$("#loading").removeClass("hidden");
+		var type = $("input[name='layout']:checked").val();
+		var value = "'"+searchValue+"'";
+		var sql = "select distinct ?result ?name where { ?result rdf:type dbo:"+type+"; rdfs:label ?name. filter regex(?name, "+value+")}"
+		if(type!='ALL'){
+			sparql.setQuery(sql)
+			sparql.query(function(json){
+				var temp = JSON.parse(json).results.bindings;
+				if(type == "Film"){
+					film = temp;
+				}else if(type == "Book"){
+					book = temp
+				}else{
+					game = temp;
+				}
+				show(JSON.parse(json).results.bindings,[],[])
+
+			});
+		}else{
+			type = "Film"
+			sql = "select distinct ?result ?name where { ?result rdf:type dbo:"+type+"; rdfs:label ?name. filter regex(?name, "+value+")}"
+			sparql.setQuery(sql)
+			sparql.query(function(json){
+				film = JSON.parse(json).results.bindings;
+				type = "Game"
+				sql = "select distinct ?result ?name where { ?result rdf:type dbo:"+type+"; rdfs:label ?name. filter regex(?name, "+value+")}"
+				sparql.setQuery(sql)
+				sparql.query(function(json){
+					game = JSON.parse(json).results.bindings;
+					type = "Book"
+					sql = "select distinct ?result ?name where { ?result rdf:type dbo:"+type+"; rdfs:label ?name. filter regex(?name, "+value+")}"
+					sparql.setQuery(sql)
+					sparql.query(function(json){
+						book = JSON.parse(json).results.bindings;
+						show(film,book,game);
+					});
+				});
+			});
+		}
+	}
+	function show(film,book,game){
+		$("#loading").addClass("hidden");
+		$("#next").addClass("hidden");
+		$("#previous").addClass("hidden");
+		if(film.length == 0 && book.length == 0 && game.length == 0){
+			$("#none").removeClass("hidden");
+		}else{
+			$("#result").removeClass("hidden");
+			mainArr = film.concat(book,game)
+			showList(1);
+			showpie();
+			if(mainArr.length %10 != 0){
+				totalPage = parseInt(mainArr.length/10) + 1
+			}else{
+				totalPage = parseInt(mainArr.length/10);
+			}
+			if(mainArr.length > 10){
+				$("#next").removeClass("hidden");
+			}
+		}
+	}
+	function next(){
+		currentPage++;
+		if(currentPage > 1){
+			$("#previous").removeClass("hidden");
+		}
+		if(currentPage == totalPage){
+			$("#next").addClass("hidden");
+		}
+		showList(currentPage)
+	}
+
+	function previous(){
+		currentPage--;
+		if(currentPage ==1){
+			$("#previous").addClass("hidden");
+		}
+		if(currentPage < totalPage){
+			$("#next").removeClass("hidden");
+		}
+		showList(currentPage)
+	}
+
+	function showList(page){
+		$("#list").empty();
+		var str = []
+		for(var i = (page-1)*10; i < 10*page && i < mainArr.length; i++){
+			var desc = "movie";
+			if(i < film.length){
+
+			}else if(i >= film.length && i < (film.length + book.length)){
+				desc = "book"
+			}else{
+				desc = "game"
+			}
+			str = str + "<p><a href='"+mainArr[i].result.value+"'>"+"【"+desc+"】"+mainArr[i].name.value+"</a></p>"
+		}
+		$("#list").append(str);
+	}
+
+		function showpie(){
+			var dom = document.getElementById("container");
+			var myChart = echarts.init(dom);
+			var app = {};
+			option = null;
+			
+			var category = ["movie", "book", 'game'];
+			//var barData = [{value:film.length,name:'movie'},
+			//           	{value:book.length,name:'book'},
+			//           	{value:game.length,name:'game'}];
+			var barData = [film.length,book.length,game.length];
+			//var barData = [45,56,68];
+			var lineData = [120, 120, 120]
+			console.log(barData)
+			option = {
+				backgroundColor: '#003366',
+				xAxis: {
+					show: false
+				},
+				yAxis: {
+					data: category,
+					show: false
+				},
+				series: [{
+					name: '',
+					type: 'pictorialBar',
+					symbol: 'image://data:image/svg+xml;base64,PHN2ZyBpZD0n5aSW6YOo5Zyw55CDLeiDjOaZr+adoScgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB3aWR0aD0nMzYwJyBoZWlnaHQ9JzY4Jz4KICA8bWV0YWRhdGE+PD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLycgeDp4bXB0az0nQWRvYmUgWE1QIENvcmUgNS42LWMxMzggNzkuMTU5ODI0LCAyMDE2LzA5LzE0LTAxOjA5OjAxICAgICAgICAnPgogICA8cmRmOlJERiB4bWxuczpyZGY9J2h0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMnPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0nJy8+CiAgIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0ndyc/PjwvbWV0YWRhdGE+CjxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICMxYjI4MzY7CiAgICAgICAgb3BhY2l0eTogMC4zOwogICAgICB9CgogICAgICAuY2xzLTEsIC5jbHMtMywgLmNscy00IHsKICAgICAgICBmaWxsLXJ1bGU6IGV2ZW5vZGQ7CiAgICAgIH0KCiAgICAgIC5jbHMtMiwgLmNscy0zIHsKICAgICAgICBmaWxsOiAjMjU1MzgyOwogICAgICB9CgogICAgICAuY2xzLTQgewogICAgICAgIGZpbGw6ICM3NmViZmM7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnIGlkPSdfMycgZGF0YS1uYW1lPSczJz4KICAgIDxwYXRoIGlkPSfnn6nlvaJfMicgZGF0YS1uYW1lPSfnn6nlvaIgMicgY2xhc3M9J2Nscy0xJyBkPSdNNTU1LjIzNywyMzRsMTAuMDQxLS4wMDlMNTQ1LjExOCwyODBINTM1WicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV8xNCcgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMTQnIGNsYXNzPSdjbHMtMScgZD0nTTU0My4xLDIzNGgxMC4xMThMNTM1LDI3NVYyNDlaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzE1JyBkYXRhLW5hbWU9J+efqeW9oiAyIOaLt+i0nSAxNScgY2xhc3M9J2Nscy0xJyBkPSdNNTM0Ljk4OSwyMzMuOTkxTDU0MS4wNzEsMjM0LDUzNSwyNDVaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdJyBkYXRhLW5hbWU9J+efqeW9oiAyIOaLt+i0nScgY2xhc3M9J2Nscy0xJyBkPSdNNTY3LjM3OCwyMzRsMTAuMjIxLS4wMDlMNTU3LjI2LDI4MEg1NDcuMTQyWicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV8yJyBkYXRhLW5hbWU9J+efqeW9oiAyIOaLt+i0nSAyJyBjbGFzcz0nY2xzLTEnIGQ9J001NzkuNjc2LDIzMy45OTFMNTkwLjY1MSwyMzQsNTY5LjQsMjgwSDU1OS4yODRaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzMnIGRhdGEtbmFtZT0n55+p5b2iIDIg5ou36LSdIDMnIGNsYXNzPSdjbHMtMScgZD0nTTU5Mi42NzQsMjM0aDEwLjExOWwtMjEuMjQ5LDQ2SDU3MS40MjZaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzQnIGRhdGEtbmFtZT0n55+p5b2iIDIg5ou36LSdIDQnIGNsYXNzPSdjbHMtMScgZD0nTTYwNC44MTYsMjM0aDEwLjExOWwtMjEuMjQ5LDQ2SDU4My41NjhaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzUnIGRhdGEtbmFtZT0n55+p5b2iIDIg5ou36LSdIDUnIGNsYXNzPSdjbHMtMScgZD0nTTYxNi45NTgsMjM0aDEwLjExOWwtMjEuMjQ5LDQ2SDU5NS43MVonIHRyYW5zZm9ybT0ndHJhbnNsYXRlKC01MjYgLTIyMyknLz4KICAgIDxwYXRoIGlkPSfnn6nlvaJfMl/mi7fotJ1fNicgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gNicgY2xhc3M9J2Nscy0xJyBkPSdNNjI5LjEsMjM0aDEwLjExOUw2MTcuOTcsMjgwSDYwNy44NTJaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzYtMicgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gNicgY2xhc3M9J2Nscy0xJyBkPSdNNjQxLjI4MiwyMzMuOTkxTDY1MS4zNjEsMjM0bC0yMC4yMzcsNDZoLTExLjEzWicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV83JyBkYXRhLW5hbWU9J+efqeW9oiAyIOaLt+i0nSA3JyBjbGFzcz0nY2xzLTEnIGQ9J002NTMuMzg0LDIzNEg2NjMuNWwtMjAuMjM3LDQ2SDYzMy4xNDhaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzctMicgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gNycgY2xhc3M9J2Nscy0xJyBkPSdNNjY1LjUyNiwyMzRoMTAuMTE5bC0yMC4yMzcsNDZINjQ1LjI5WicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV84JyBkYXRhLW5hbWU9J+efqeW9oiAyIOaLt+i0nSA4JyBjbGFzcz0nY2xzLTEnIGQ9J002NzcuNjY4LDIzNGgxMC4xMTlMNjY3LjU1LDI4MEg2NTcuNDMyWicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV84LTInIGRhdGEtbmFtZT0n55+p5b2iIDIg5ou36LSdIDgnIGNsYXNzPSdjbHMtMScgZD0nTTY4OS44MSwyMzRoMTAuMTE5TDY4MC43LDI4MGgtMTEuMTNaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzknIGRhdGEtbmFtZT0n55+p5b2iIDIg5ou36LSdIDknIGNsYXNzPSdjbHMtMScgZD0nTTcwMS45NTMsMjM0aDEwLjExOGwtMjAuMjM3LDQ2aC05LjEwNlonIHRyYW5zZm9ybT0ndHJhbnNsYXRlKC01MjYgLTIyMyknLz4KICAgIDxwYXRoIGlkPSfnn6nlvaJfMl/mi7fotJ1fOS0yJyBkYXRhLW5hbWU9J+efqeW9oiAyIOaLt+i0nSA5JyBjbGFzcz0nY2xzLTEnIGQ9J003MTQuMSwyMzRoMTAuMTE4bC0xOS4yMjUsNDZINjk0Ljg3WicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV8xMCcgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMTAnIGNsYXNzPSdjbHMtMScgZD0nTTcyNi4yMzcsMjM0aDEwLjExOEw3MTcuMTMsMjgwSDcwNy4wMTJaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzEwLTInIGRhdGEtbmFtZT0n55+p5b2iIDIg5ou36LSdIDEwJyBjbGFzcz0nY2xzLTEnIGQ9J003MzguMzc5LDIzNEg3NDguNWwtMTguMjEzLDQ2aC0xMS4xM1onIHRyYW5zZm9ybT0ndHJhbnNsYXRlKC01MjYgLTIyMyknLz4KICAgIDxwYXRoIGlkPSfnn6nlvaJfMl/mi7fotJ1fMTAtMycgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMTAnIGNsYXNzPSdjbHMtMScgZD0nTTc1MC41MjEsMjM0aDExLjEzbC0xOS4yMjUsNDZINzMyLjMwOFonIHRyYW5zZm9ybT0ndHJhbnNsYXRlKC01MjYgLTIyMyknLz4KICAgIDxwYXRoIGlkPSfnn6nlvaJfMl/mi7fotJ1fMTAtNCcgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMTAnIGNsYXNzPSdjbHMtMScgZD0nTTc2My42NzQsMjM0aDEwLjExOWwtMTkuMjI1LDQ2SDc0NC40NVonIHRyYW5zZm9ybT0ndHJhbnNsYXRlKC01MjYgLTIyMyknLz4KICAgIDxwYXRoIGlkPSfnn6nlvaJfMl/mi7fotJ1fMTAtNScgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMTAnIGNsYXNzPSdjbHMtMScgZD0nTTc3NS44MTYsMjM0aDEwLjExOUw3NjYuNzEsMjgwSDc1Ni41OTJaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzEwLTYnIGRhdGEtbmFtZT0n55+p5b2iIDIg5ou36LSdIDEwJyBjbGFzcz0nY2xzLTEnIGQ9J003ODcuOTU4LDIzNGgxMC4xMTlsLTE5LjIyNSw0Nkg3NjguNzM0WicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV8xMScgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMTEnIGNsYXNzPSdjbHMtMScgZD0nTTgwMC4xLDIzNGgxMC4xMTlsLTE5LjIyNSw0Nkg3ODAuODc2WicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV8xNicgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMTYnIGNsYXNzPSdjbHMtMScgZD0nTTg3MS45NDEsMjM0bDUuMDI2LS4wMDlMODc3LDI0NmwtMTMuMTU0LDM0aC0xMS4xM1onIHRyYW5zZm9ybT0ndHJhbnNsYXRlKC01MjYgLTIyMyknLz4KICAgIDxwYXRoIGlkPSfnn6nlvaJfMl/mi7fotJ1fMTYtMicgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMTYnIGNsYXNzPSdjbHMtMScgZD0nTTg3NywyNTB2MzBIODY1Ljg3WicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV8yNicgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMjYnIGNsYXNzPSdjbHMtMScgZD0nTTgxMi4yNDIsMjM0aDEwLjExOWwtMTkuMjI1LDQ2SDc5My4wMThaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzI3JyBkYXRhLW5hbWU9J+efqeW9oiAyIOaLt+i0nSAyNycgY2xhc3M9J2Nscy0xJyBkPSdNODI0LjM4NSwyMzRoOS4xMDZsLTE5LjIyNSw0Nkg4MDUuMTZaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzI4JyBkYXRhLW5hbWU9J+efqeW9oiAyIOaLt+i0nSAyOCcgY2xhc3M9J2Nscy0xJyBkPSdNODM1LjUxNSwyMzRoMTAuMTE4bC0xOS4yMjUsNDZIODE2LjI5WicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+efqeW9ol8yX+aLt+i0nV8zMicgZGF0YS1uYW1lPSfnn6nlvaIgMiDmi7fotJ0gMzInIGNsYXNzPSdjbHMtMScgZD0nTTg0Ny42NTcsMjM0aDEwLjExOEw4MzguNTUsMjgwSDgyOC40MzJaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n55+p5b2iXzJf5ou36LSdXzMyLTInIGRhdGEtbmFtZT0n55+p5b2iIDIg5ou36LSdIDMyJyBjbGFzcz0nY2xzLTEnIGQ9J004NTkuOCwyMzRoMTAuMTE4bC0xOS4yMjUsNDZIODQwLjU3NFonIHRyYW5zZm9ybT0ndHJhbnNsYXRlKC01MjYgLTIyMyknLz4KICAgIDxyZWN0IGlkPSfnn6nlvaJfMycgZGF0YS1uYW1lPSfnn6nlvaIgMycgY2xhc3M9J2Nscy0yJyB4PSc5JyB5PSc1JyB3aWR0aD0nMzQyJyBoZWlnaHQ9JzEnLz4KICAgIDxyZWN0IGlkPSfnn6nlvaJfM1/mi7fotJ0nIGRhdGEtbmFtZT0n55+p5b2iIDMg5ou36LSdJyBjbGFzcz0nY2xzLTInIHg9JzknIHk9JzYyJyB3aWR0aD0nMzQyJyBoZWlnaHQ9JzEnLz4KICA8L2c+CiAgPGcgaWQ9J18yJyBkYXRhLW5hbWU9JzInPgogICAgPHBhdGggaWQ9J+S4iuaLrOWPt1/mi7fotJ1fMicgZGF0YS1uYW1lPSfkuIrmi6zlj7cg5ou36LSdIDInIGNsYXNzPSdjbHMtMycgZD0nTTg3NywyMjloNWwyLDIsMS0xLTItMmgtNnYxWicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+S4iuaLrOWPtycgY2xhc3M9J2Nscy0zJyBkPSdNODc3LDI4Nmg2bDItMi0xLTEtMiwyaC01djFaJyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgtNTI2IC0yMjMpJy8+CiAgICA8cGF0aCBpZD0n5b2i54q2XzInIGRhdGEtbmFtZT0n5b2i54q2IDInIGNsYXNzPSdjbHMtNCcgZD0nTTg3NywyMjd2Mmg0bDMsMiwyLTEtNC0zaC01WicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+W9oueKtl8yLTInIGRhdGEtbmFtZT0n5b2i54q2IDInIGNsYXNzPSdjbHMtNCcgZD0nTTg3NywyODd2LTJoNGwzLTIsMiwxLTQsM2gtNVonIHRyYW5zZm9ybT0ndHJhbnNsYXRlKC01MjYgLTIyMyknLz4KICA8L2c+CiAgPGcgaWQ9J18xJyBkYXRhLW5hbWU9JzEnPgogICAgPHBhdGggaWQ9J+S4iuaLrOWPty0yJyBkYXRhLW5hbWU9J+S4iuaLrOWPtycgY2xhc3M9J2Nscy0zJyBkPSdNNTM1LDIyOWgtNWwtMiwyLTEtMSwyLTJoNnYxWicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+S4iuaLrOWPt1/mi7fotJ0nIGRhdGEtbmFtZT0n5LiK5ous5Y+3IOaLt+i0nScgY2xhc3M9J2Nscy0zJyBkPSdNNTM1LDI4NmgtNmwtMi0yLDEtMSwyLDJoNXYxWicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogICAgPHBhdGggaWQ9J+W9oueKtl8yLTMnIGRhdGEtbmFtZT0n5b2i54q2IDInIGNsYXNzPSdjbHMtNCcgZD0nTTUzNSwyMjd2MmgtNGwtMywyLTItMSw0LTNoNVonIHRyYW5zZm9ybT0ndHJhbnNsYXRlKC01MjYgLTIyMyknLz4KICAgIDxwYXRoIGlkPSflvaLnirZfMi00JyBkYXRhLW5hbWU9J+W9oueKtiAyJyBjbGFzcz0nY2xzLTQnIGQ9J001MzUsMjg3di0yaC00bC0zLTItMiwxLDQsM2g1WicgdHJhbnNmb3JtPSd0cmFuc2xhdGUoLTUyNiAtMjIzKScvPgogIDwvZz4KPC9zdmc+Cg==',
+					barWidth: 100,
+					data: lineData,
+					barGap: '-100%',
+					symbolOffset: [0, '-50%'],
+					barCategoryGap: 0,
+					 // animationEasing: 'elasticOut',
+						 animationDelay: function (dataIndex, params) {
+						return params.index * 30;
+					}
+				}, {
+					name: '',
+					type: 'pictorialBar',
+					symbol: 'rect',
+					itemStyle: {
+						normal: {
+							color: '#1F4683'
+						}
+					},
+					barWidth: 10,
+					symbolRepeat: true,
+					symbolSize: 14,
+					data: lineData,
+					barGap: '-100%',
+					barCategoryGap: 0,
+					label: {
+						normal: {
+							show: true,
+							formatter: (series) => {
+								return barData[series.dataIndex]
+							},
+							position: 'insideTopRight',
+							offset: [0, -30],
+							color: '#fff',
+							fontSize: 20
+						}
+					},
+					z: -100,
+						animationEasing: 'elasticOut',
+						 animationDelay: function (dataIndex, params) {
+						return params.index * 30;
+					}
+				}, {
+					name: '',
+					type: 'pictorialBar',
+					symbol: 'rect',
+					barWidth: 10,
+					itemStyle: {
+						normal: {
+							barBorderRadius: 5,
+							color: '#6DE8FA'
+						}
+					},
+					symbolRepeat: true,
+					symbolSize: 14,
+					data: barData,
+					label: {
+						normal: {
+							show: true,
+							formatter: '{b}',
+							position: [2, -30],
+							color: '#fff',
+							fontSize: 20
+						}
+					},
+						animationEasing: 'elasticOut',
+						 animationDelay: function (dataIndex, params) {
+						return params.index * 30 * 1.1;
+					}
+				}],
+				animation: true
+			};
+
+			
+
+			if (option && typeof option === "object") {
+				myChart.setOption(option, true);
+			}
+		}
+
+	//search();
+	</script>
+
+</body>
+</html>
