@@ -157,13 +157,13 @@
 			</div>
 			
 			<hr style="border:3 double #987cb9" width="80%" color="#987cb9" SIZE=3 ></hr>
-			<div id="none" class="col-md-4 col-md-offset-4 hidden"><p><font size ="6" face="Verdana" color="#6495ED">可能喜欢</font></p></div>
+			
 					
 
 			<div id="result" class="row hidden" >
-				<div class="col-md-4 col-md-offset-1  mydiv">
+				<div class="col-md-4 col-md-offset-1  mydiv" align="left">
 				
-					<div>
+					<div >
 						<li id="list" align="left"> </li>
 					</div>
 					
@@ -185,6 +185,7 @@
 <div id="result_tuijian" style = "margin-left:80px" ><p></p></div>
 </div>
 <div style='width:1px;border:#2e6da4;float:left;height:700px;'><!--这个div模拟一条红色的垂直分割线--></div>
+<div id="none" class="col-md-4 col-md-offset-4 hidden"><p><font size ="6" face="Verdana" color="#6495ED">可能喜欢</font></p></div>
 <div style='width:50%;float:left;height:700px;'>
 <div id="container_tuijian" style="height:340px;margin:80px">
 </div>
@@ -346,13 +347,16 @@
 	function showInfo_tuijian(tuijian){
 		var text = "";
 		//text += "<h2>相关推荐</h2>"; 替换
+		text += "<h2>可能喜欢:</h2>" + "<br/>"
 		if(tuijian.length !== 0){
 			for(var i = 0; i < tuijian.length; i++){
 				//text += results[i];
+				
 				text += "推荐" + (i+1) + ":<br/>" 
-				text += "URI : " + tuijian[i]["callret-1"].value + "<br />";
+				//text += "URI : " + tuijian[i]["callret-1"].value + "<br />";
+				text += "出版物 : " + tuijian[i]["callret-1"].value.split("/")[tuijian[i]["callret-1"].value.split("/").length-1].replace(/\_/g," ") + "<br />";
 				text += "--------------------------------------------------------------------------------------------------------------------------" + "<br /><br />";
-				//console.log("count",tuijian[i]["callret-0"].value);
+				//console.log("count",tuijian[i]["callret-1"].value.split("/")[tuijian[i]["callret-1"].value.split("/").length-1]);
 				search_tuijian("result_tuijian").innerHTML = text;
 			}
 		}else{
