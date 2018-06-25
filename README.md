@@ -5,5 +5,6 @@ a recommender system for publicaion
 
   其中：Pubulication_search_recommendation_system.html为我们本次的页面展示；3个系统说明书中包含了小组成员得分、设计思路、功能介绍和使用说明；requirements.txt中为小组初期设定的功能需求。
 
-  (ps:网速不好时有内容显示不出来, 搜索时为保证结果完整性，请首字母大写)
-  请老师用谷歌浏览器打开网页.
+  (ps:网速不好时有内容显示不出来, 搜索时为保证结果完整性，请首字母大写并且请老师多等一会儿使全部内容加载出来)
+  
+  ## 请老师用谷歌浏览器打开网页.
